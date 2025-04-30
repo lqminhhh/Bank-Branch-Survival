@@ -1,0 +1,210 @@
+VARIABLE,Title,Long Description,Definition,SOD Type
+ADDRESBR,Address (Branch),Address (Branch),Physical location of the branch,Branch
+ADDRESS,Street Address,Physical Street Address,The street address at which an Institution or Branch Office is physically located.,Institution
+ASSET,Total Assets,Total Assets,"( YTD, $ ) The sum of all assets owned by the Institution including cash, loans, securities, bank premises and other assets. This total does not include off-balance-sheet accounts.",Institution
+BKCLASS,Institution Class,Institution Bank Charter Class,"A classification code assigned by the FDIC based on the Institution's Charter type (Commercial Bank or Savings Institution), Charter Agent (State or Federal), Federal Reserve Membership status (Fed Member, Fed Non-Member) and its primary Federal Regulator (State Chartered Institutions are subject to both Federal and State Supervision).
+N - Commercial Bank, National (Federal) Charter, Fed Member, and supervised by the Office of the Comptroller of the Currency (OCC); 
+NM - Commercial Bank, State Charter, Fed Non-Member, and supervised by the Federal Deposit Insurance Corporation (FDIC); 
+OI - Insured U.S. branch of a Foreign Chartered Institution (IBA) and supervised by the OCC or FDIC; 
+SB Federal Savings Banks, Federal Charter, supervised by the OCC or before July 21,2011 the Office of Thrift Supervision (OTS); 
+SI - State Chartered Stock Savings Banks, supervised by the FDIC; 
+SL - State Chartered Stock Savings and Loan Associations, supervised by the FDIC or before July 21,2011 the OTS; 
+SM - Commercial Bank, State Charter, Fed Member, and supervised by the Federal Reserve Bank (FRB); 
+NC - Non-Insured Non-Deposit Commercial Banks and/or Trust Companies regulated by the OCC, a State, or a Territory; 
+NS - Non-Insured Stock Savings Bank supervised by a State or Territory; 
+CU - State or Federally Chartered Credit Unions supervised by the National Credit Union Association (NCUA).
+Note: The BKCLASS value represents the Institution’s class as of the SOD survey date.",Institution
+BKMO,Main Office Designation Flag (Branch),Main Office Designation Flag (Branch),"Main office / branch identifier; Main office = 1, branch = 0",Branch
+BRCENM,Branch Office CENCODES,Branch Office CENMCode,"Code used to describe the nature of the reported deposits:
+C - Combined
+E - Estimated
+N - Non Deposit
+M - Main Office",Branch
+BRNUM,Branch Office Number (Branch),Branch Office Number (Branch),Numerical reference to identify a branch office within one institution,Branch
+BRSERTYP,Branch Service Type (Branch),Branch Service Type (Branch),"Code that defines the type of service the branch office provides:
+11- Full Service, brick and mortar office
+12- Full Service, retail office
+13- Full Service, cyber office
+21- Limited Service, administrative office
+22- Limited Service, military facility
+23- Limited Service, drive-through facility
+24- Limited Service, loan production office
+25- Limited Service, consumer credit office
+26- Limited Service, contractual office
+27- Limited Service, messenger office
+28- Limited Service, retail office
+29- Limited Service, mobile/seasonal office
+30- Limited Service, trust office",Branch
+CALL,CALL and TFR Report identifier (Institution),CALL and TFR Report identifier (Institution),"Prior to 2012, OTS institutions filed a quarterly Thrift Financial Report (TFR). All other institutions file the Call Report.",Institution
+CBSA_DIV_NAMB,Metropolitan Division Name (Branch),Metropolitan Division Name (Branch),"The name that corresponds to a code for a county or group of counties within a Core Based Statistical Area that contains a core with a population of at least 2.5 million. A Metropolitan Division consists of one or more main/secondary counties that represent an employment center or centers, plus adjacent counties associated with the main county or counties through commuting ties.",Branch
+CERT,FDIC Certificate #,FDIC Certificate #,A unique number assigned by the FDIC used to identify Institutions and for the issuance of Insurance Certificates.,
+CHARTER,Charter Type (Institution),Charter Type (Institution),Identifies whether an institution is federally or state chartered.,Institution
+CITY,City,City,City in which an Institution's headquarters or one of its branches is physically located. Either the entire name or part of the name of a specific city may be entered to produce an Institution List.,
+CITY2BR,City (USPS) (Branch),City (USPS) (Branch),Central city based on the reported ZIP code of the branch,Branch
+CITYBR,City (Reported)(Branch),City (Reported)(Branch),Reported city in which the branch is located,Branch
+CITYHCR,City of High Holder,City of Regulatory High Holder,City in which the headquarters of the Institution's Regulatory High Holder are physically located.,BHC
+CLCODE,Numeric Code for Bank Class,Numeric Code for Bank Class,"A number that Sub-Categorizes a Major Class of Institutions.
+
+3 = National Bank, Federal Reserve System (FRS) Member;
+13 = State Commercial Bank, FRS Member;
+15 = State Savings, Co-op, or Industrial bank, FRS Member;
+21 = State Commercial Bank, not FRS Member;
+23 = State Savings, Co-op, or Industrial Bank, not FRS Member;
+25 - State Mutual Commercial Bank, not FRS Member;
+33 = Federal Chartered Stock Savings Bank;
+34 = Federal Chartered Mutual Saving Bank;
+35 = State Chartered Stock Savings and Loan Association;
+36 = State Chartered Mutual Savings and Loan Association;
+37 = Federal Chartered Stock Savings and Loan Association;
+38 = Federal Chartered Mutual Savings and Loan Association;
+41 = State Chartered Stock Savings Bank;
+42 = State Chartered Mutual Savings Bank;
+43 = Federal Chartered Stock Savings Bank (historical);
+44 = Federal Chartered Mutual Savings Bank (historical);
+50 = OCC Chartered Nondeposit and/or Noninsured Trust Companies;
+51 = Noninsured Commercial Bank;
+52 = Noninsured Domestic Offices of Foreign Bank (International Banking Act);
+53 = Noninsured Industrial Bank;
+54 = State Chartered Nondeposit and/or Noninsured Trust Company, not FRS member;
+55 = State Chartered Domestic Branches of Foreign Banks;
+56 = OCC Chartered Domestic Branches of Foreign Banks;
+57 = New York Investment Company;
+58 = State Chartered Nondeposit and/or Noninsured Trust Company, FRS Member;
+59 = OTS Chartered Nondeposit and/or Noninsured Trust Company;
+61 = Noninsured Private Bank;
+62 = Noninsured Loan Workout Bank, OCC Chartered;
+63 = Noninsured Loan Workout Bank, State Chartered, FRS member;
+64 = Noninsured Loan Workout Bank, State Chartered, not FRS member;
+65 = Other Holding Company;
+71 = Transfer Agent;
+81 = Noninsured Stock Savings Bank;
+82 = Noninsured Mutual Savings Bank;
+85 = Noninsured Stock Savings and Loan Association;
+86 = Noninsured Mutual Savings and Loan Association;
+89 = Noninsured Insurance Company;
+91 = State Chartered Credit Unions;
+92 = Federal Chartered Credit Unions;
+93 = Privately Insured State Credit Union.",Institution
+CNTRYNA,Country Name (Institution),Country Name (Institution),The country name where the headquarters of the institution is chartered.,Institution
+CNTRYNAB,FIPS Country Name (Branch),FIPS Country Name (Branch),Country name in which the branch is located.,Branch
+CNTYNAMB,County Name (Branch),County Name (Branch),County name in which the branch is located.,Branch
+CNTYNUMB,County Number (Branch),County Number (Branch),County number that corresponds to the county in which the branch is located.,Branch
+CONSOLD,Consolidated Number (Branch),Consolidated Number (Branch),"When BRCENM = C, consolidated, this is the office number (BRNUM) in which the deposits are reported. Both branches should be within the same state and county.",Branch
+CSABR,Combined Statistical Areas (Branch),Combined Statistical Areas (Branch),"The identifying code of a geographic entity consisting of two or more adjacent Core Based Statistical Areas (CBSAs) with employment interchange measures of at least 15. Pairs of CBSAs with employment interchange measures of at least 25 combine automatically. Pairs of CBSAs with employment interchange measures of at least 15, but less than 25, may combine if local opinion in both areas favors combination.",Branch
+CSANAMBR,Combined Statistical Area Name (Branch),Combined Statistical Area Name (Branch),"The name of a geographic entity consisting of two or more adjacent Core Based Statistical Areas (CBSAs) with employment interchange measures of at least 15. Pairs of CBSAs with employment interchange measures of at least 25 combine automatically. Pairs of CBSAs with employment interchange measures of at least 15, but less than 25, may combine if local opinion in both areas favors combination.",Branch
+DENOVO,Denovo Institution Flag,Denovo Institution Flag,"A flag used to indicate whether an Institution is a new Institution (not a Recharter). This flag is set quarterly. For instance, if REPDTE is 3/31/98 and DENOVO equals 1, the Institution was a Denovo during the first quarter of 1998.",Institution
+DEPDOM,Deposits Held in Domestic Offices,Total Liabilities & Capital: Deposits Held in Domestic Offices,"( YTD, $ ) The sum of all domestic office deposits (as of June 30), including demand deposits, money market deposits, other savings deposits and time deposits.",Institution
+DEPSUM ,Total Deposits (Institution),Total Deposits (Institution),Total deposits of the institution as of June 30.,Institution
+DEPSUMBR,Deposits (Branch)(in thousands of dollars),Deposits (Branch)(in thousands of dollars),Branch office deposits as of June 30,Branch
+DIVISIONB,Metropolitan Divisions Flag (Branch),Metropolitan Divisions Flag (Branch),"A county or group of counties within a Core Based Statistical Area that contains a core with a population of at least 2.5 million. A Metropolitan Division consists of one or more main/secondary counties that represent an employment center or centers, plus adjacent counties associated with the main county or counties through commuting ties.",Branch
+DOCKET,OTS Docket Number,OTS Docket Number,A unique identification number assigned to Institutions chartered by the Office of Thrift Supervision (OTS) or members of the Federal Housing Finance Board (FHFB) and formerly by the Federal Home Loan Bank (FHLB) Board. The value is '00000' for institutions not members of the FHFB.,Institution
+ESCROW,Escrow Accounts (TFR) (Institution),Escrow Accounts (TFR) (Institution),Escrow deposits report on the Thrift Financial Reports. These are included in the total domestic deposits on the Call Reports.,Institution
+FDICDBS,FDIC Region Number,FDIC Geographic Region,"The FDIC Office assigned to the Geographic Area. The eight FDIC Regions and their respective states are:
+1) Boston - Connecticut, Maine, Massachusetts, New Hampshire, Rhode Island, Vermont.
+2) New York - Delaware, District of Columbia, Maryland, New Jersey, New York, Pennsylvania, Puerto Rico, U.S. Virgin Islands.
+3) Atlanta - Alabama, Florida, Georgia, North Carolina, South Carolina, Virginia, West Virginia.
+4) Memphis - Arkansas, Kentucky, Louisiana, Mississippi, Tennessee.
+5) Chicago - Illinois, Indiana, Michigan, Ohio, Wisconsin.
+6) Kansas City - Iowa, Kansas, Minnesota, Missouri, Nebraska, North Dakota, South Dakota.
+7) Dallas - Colorado, New Mexico, Oklahoma, Texas.
+8) San Francisco - Alaska, American Samoa, Arizona, California, Guam, Hawaii, Idaho, Montana, Nevada, Oregon, States of Micronesia, Utah, Washington, Wyoming.",Institution
+FDICNAME,FDIC Region Name (Institution),FDIC Region Name (Institution),The name of the FDIC Regional Office that services the institution.,Institution
+FED,Federal Reserve ID Number,Federal Reserve District ID Number,"A number used to identify the Federal Reserve District in which the Institution is located.
+01 - Boston,
+02 - New York,
+03 - Philadelphia,
+04 - Cleveland,
+05 - Richmond,
+06 - Atlanta,
+07 - Chicago,
+08 - St. Louis,
+09 - Minneapolis,
+10 - Kansas City,
+11 - Dallas,
+12 - San Francisco.",Institution
+FEDNAME,Federal Reserve District Name (Institution),Federal Reserve District Name (Institution),The name that identifies the Federal Reserve District where the institution is located.,Institution
+HCTMULT,Multi-Bank Holding Company,Bank Holding Company Flag,"A flag (1 = Yes, 0 = No) used to indicate whether an Institution is a member of a Multi-Bank Holding Company.
+Only in SOD - The code that identifies the type of Holding Company associated with the branch. The options are:
+MULT - Multi-Bank Holding Company;  
+ONE - One Bank Holding Company; 
+NONE - Not a Member of a Bank Holding Company.",BHC
+INSAGNT1,Primary Insurance Agency/Fund,Primary Insurance Agency,"The Primary Insurer, Insurance Agent, or Insurance Status of an Institution.
+BIF - Bank Insurance Fund, 
+DIF - Deposit Insurance Fund, 
+SAIF - Savings Insurance Fund, 
+STATE - State Insured,
+PRIV - Private Insured,
+SOVER - Foreign Insured,
+OTHER - Other Insured,
+NONE - NOT Insured,
+NCUA - National Credit Union Association Insurance.",Institution
+INSBRDD,Demand Deposits in Insured Branches (Institution),Demand Deposits in Insured Branches (Institution),Demand deposits in insured branches located in Puerto Rico and U.S. Territories and Possessions.,Institution
+INSBRTS,Time & Savings Deposits in Insured Branches (Institution),Time & Savings Deposits in Insured Branches (Institution),Time and savings deposits in insured branches located in Puerto Rico and U.S. Territories and Possessions.,Institution
+INSURED,Insured (Institution),Insured (Institution),"Identifies commercial banks (CB), savings institutions (SA), and insured branches of foreign banks (IB)",Institution
+METROBR,Metropolitan Division Flag (Branch),Metropolitan Division Flag (Branch),"An indicator for an area that contains a core urban area of 50,000 or more population",Branch
+MICROBR,Micropolitan Division Flag (Branch),Micropolitan Division Flag (Branch),"An indicator for an area contains an urban core of at least 10,000 (but less than 50,000) population.",Branch
+MSABR,Metropolitan Statistical Areas (Branch),Metropolitan Statistical Areas (Branch),"The Metropolitan Statistical Areas (MSABR) are based on the 2010 Census. These areas correspond to the state/county/CBSA relationships as defined by the Census Bureau. For the purpose of the Summary of Deposits, MSAs reflect only the CBSA codes for metropolitan areas (use MSABR for the Summary of Deposits).",Branch
+MSANAMB,Metropolitan Statistical Area Name (Branch),Metropolitan Statistical Area Name (Branch),"The Metropolitan Statistical Area name in which the branch is physically located. The Metropolitan Statistical Areas (MSABR) are based on the 2010 Census. These areas correspond to the state/county/CBSA relationships as defined by the Census Bureau. For the purpose of the Summary of Deposits, MSAs reflect only the CBSA codes for metropolitan areas (use MSABR for the Summary of Deposits).",Branch
+NAMEBR,Branch Name (Branch),Branch Name (Branch),Branch name.,Branch
+NAMEFULL,Institution Name at Time of Reporting,Institution Name at Time of Reporting,Institution Name at Time of Reporting,Institution
+NAMEHCR,Name of Bank Holding Company (Regulatory Top Holder),Bank Holding Company (Regulatory Top Holder),"Regulatory Top Holder is assigned by the Federal Reserve Board based on ownership and control percentages. Note: Information on Bank Holding Companies is only as of quarter-end. Regulatory Top Holder is any company that directly or indirectly owns, controls or has power to vote 25 percent or more of a bank's or direct holding company's shares or controls in any manner the election of a majority of the directors or trustees of a bank or direct holding company or exercises a controlling influence over the management or policies of a bank or direct holding company. Information on Thrift Holding Companies that own Savings Associations but do not own banks is not currently available in the ID System. Source: Federal Reserve Board National Information Center data base.
+Note: Information on bank holding companies is only as of quarter-end. Regulatory Top Holder is any company that directly or indirectly owns, controls or has power to vote 25 percent or more of a bank's or direct holding company's shares or controls in any manner the election of a majority of the directors or trustees of a bank or direct holding company or exercises a controlling influence over the management or policies of a bank or direct holding company. Information on Thrift Holding Companies that own Savings Associations but do not own banks is not currently available in the ID System. Source: Federal Reserve Board National Information Center Data Base.",BHC
+NECNAMB,New England City and Town Area Names (Branch Office),New England City and Town Area Names (Branch Office),Name of the New England City Town Areas based on the PLACENUM.,Branch
+NECTABR,New England City and Town Areas (Branch Office),New England City and Town Areas (Branch Office),Code of the New England City Town Areas based on the PLACENUM.,Branch
+OCCDIST,Office of The Comptroller District,Office of The Comptroller District,"The Office of the Comptroller of the Currency (OCC) District in which the Institution is physically located. The eight OCC Districts and their respective regions are:
+01 - Northeastern District,
+03 - Central District,
+04 - Western District,
+05 - Southern District,
+06 - Large Bank Supervision Locations,
+07 - Midsize Bank Supervision Locations,
+08 - Special Supervision.
+For more information go to OCC: https://www.occ.treas.gov/about/who-we-are/locations/index-locations.html",Institution
+OCCNAME,OCC Region Name (Institution),OCC Region Name (Institution),"The name associated with the Comptroller of the Currency district in which the institution is located; 01-Northeast, 03 Central, 04 Western and 05 Southern.",Institution
+PLACENUM,Place Number (Branch),Place Number (Branch),"The FIPS MCD (Minor Civil Division) code refers to a subsection of the U.S. Census county subdivision statistics. The county subdivision FIPS includes census data for county divisions, census subareas, minor civil divisions, unorganized territories, and incorporated areas. ",Branch
+REGAGNT,Primary Federal Regulator (Institution),Primary Federal Regulator,"There are now three Federal Regulators of Banks and Savings and Loan Institutions. Before July 21, 2011, there were four Federal Regulators: Federal Deposit Insurance Corporation (FDIC) - Primary Federal Regulator responsible for State-Chartered Banks not members of the Federal Reserve System, State Chartered Savings Banks and as of July 21, 2011, state chartered thrifts. Federal Reserve Board (FRB) - Primary Federal Regulator responsible for state-chartered commercial and savings bank members of the Federal Reserve System. Office of the Comptroller of the Currency (OCC) - Primary Federal Regulator responsible for Nationally Chartered Commercial Banks, and as of July 21, 2011, Federally Chartered Thrifts. Office of Thrift Supervision (OTS) - Prior to its merger into the OCC on July 21, 2011, Primary federal regulator responsible for Federally Chartered Savings and Loan Associations, Federal Savings Banks and State-Chartered Savings and Loan Associations. FDIC Insured Depository Institutions are members of the Deposit Insurance Fund (DIF).",Institution
+RSSDHCR,RSSDID - High Regulatory Holder,RSSDID - High Regulatory Holder,The unique number assigned by the Federal Reserve Board to the Regulatory High Holding Company of the Institution.,
+RSSDID,Federal Reserve ID Number,Federal Reserve ID Number,"A unique number assigned by the Federal Reserve Board as the entity's unique identifier (RSSDID) for the Regulatory top holder.
+Note: information on bank holding companies is only as of quarter-end.regulatory top holder is any company that directly or indirectly owns, controls or has power to vote 25 percent or more of a bank's or direct holding company's shares or controls in any manner the election of a majority of the directors or trustees of a bank or direct holding company or exercises a controlling influence over the management or policies of a bank or direct holding company. Information on Thrift Holding Companies that own Savings Associations but do not own banks is not currently available in the ID System. Source: Federal Reserve Board National Information Center data base.",
+SIMS_ACQUIRED_DATE,Acquired Date (Branch Office),Acquired Date (Branch Office),The date that a branch was last acquired by another institution,Branch
+SIMS_DESCRIPTION,SIMS_DESCRIPTION,SIMS_DESCRIPTION,The quality of the match of the branch's physical location to a latitude and longitude with a given projection.,
+SIMS_ESTABLISHED_DATE,Established Date (Branch Office),Established Date (Branch Office),The date that the branch location was established.,Branch
+SIMS_LATITUDE,Physical Latitude Coordinates (Branch Office),Physical Latitude Coordinates (Branch Office),The latitude of the branch's physical location.,Branch
+SIMS_LONGITUDE,Physical Longitude Coordinates (Branch Office),Physical Longitude Coordinates (Branch Office),The longitude of the branch's physical location,Branch
+SIMS_PROJECTION,SIMS_PROJECTION,SIMS_PROJECTION,The method used to arrive at the latitude and longitude of the branch's physical location.,
+SPECDESC,Asset Concentration Hierarchy Description (Institution),Asset Concentration Hierarchy Description (Institution),"The description of a mutually exclusive industry classification grouping which indicates the institution’s primary asset specialization.
+. = NOT AVAILABLE
+0 = NO SPECIALIZATION GROUP
+1 = INTERNATIONAL SPECIALIZATION
+2 = AGRICULTURAL SPECIALIZATION
+3 = CREDIT-CARD SPECIALIZATION
+4 = COMMERCIAL LENDING SPECIALIZATION
+5 = MORTGAGE LENDING SPECIALIZATION
+6 = CONSUMER LENDING SPECIALIZATION
+7 = OTHER SPECIALIZED UNDER 1 BILLION
+8 = ALL OTHER UNDER 1 BILLION
+9 = ALL OTHER OVER 1 BILLION",Institution
+SPECGRP,Asset Concentration Hierarchy,Asset Concentration Hierarchy,"An indicator of an Institution’s primary specialization in terms of Asset Concentration.
+Note: (Groups are hierarchical and mutually exclusive):
+International Specialization – Institutions with assets greater than $10 billion and more than 25 percent of total assets in foreign offices.
+Agricultural Specialization – Banks with agricultural production loans plus real estate loans secured by farmland in excess of 25 percent of total loans and leases.
+Credit-Card Specialization – Institutions with credit-card loans plus securitized receivables in excess of 50 percent of total assets plus securitized receivables.
+Commercial Lending Specialization – Institutions with commercial and industrial loans, plus real estate construction and development loans, plus loans secured by commercial real estate properties in excess of 25 percent of total assets.
+Mortgage Lending Specialization – Institutions with residential mortgage loans, plus mortgage-backed securities, in excess of 50 percent of total assets.
+Consumer Lending Specialization – Institutions with residential mortgage loans, plus credit-card loans, plus other loans to Individuals, in excess of 50 percent of total assets.
+Other Specialized $1 Billion – Institutions with assets greater than $1 billion that do not meet any of the definitions above, they have significant lending activity with no identified asset concentrations.
+Note: Also see SPECDESC",
+STALP,State Code,State Code,The State Abbreviation of the location of the Institution's main office.,
+STALPBR,State Code (Branch),State Code (Branch),The state abbreviation of the location in which the branch is physically located.,Branch
+STALPHCR,Regulatory Holding Company State Location ,Regulatory Holding Company State Location ,State Location of the Regulatory High Holding Company (either direct or indirect owner).,
+STCNTY,State and County Number,State and County Number,A five digit number representing the state and county in which the Institution is physically located. The first two digits represent the FIPS State numeric code and the last three digits represent the FIPS County numeric code.,
+STCNTYBR,State & County Number (Branch),State & County Number (Branch),The state and county FIPS code associated with the specific branch location.,Branch
+STNAME,State Name,State Name,"State in which the Institution or Branch is physically located. The FDIC Act defines State as any state of the United States, the District of Columbia, and any territory of the United States, Puerto Rico, Guam, American Samoa, the Trust Territory of the Pacific Islands, the Virgin Island, and the Northern Mariana Islands.",Institution
+STNAMEBR,State Name (Branch),State Name (Branch),The state name where branch is physically located.,Branch
+STNUMBR,State Number (Branch),State Number (Branch),The FIPS number of the state in which the branch is physically located.,Branch
+UNINUMBR,Unique Identification Number for a Branch Office (Branch),Unique Identification Number for a Branch Office (Branch),"The unique number associated with a specific physical location of a branch. This number remains with this location over time, regardless of ownership.",Branch
+UNIT,Unit Bank flag (Institution),Unit Bank flag (Institution),A flag that identifies an institution with only a main office location; no branch locations.,Institution
+USA,Domestic Institution flag,Domestic Institution flag,A flag that identifies that the institution is headquartered in the United States.,Branch
+YEAR,Report Year (Institution),Report Year (Institution),Year of survey (1994 - Current). All SOD surveys are annual as of June 30.,Institution
+ZIP,Zip Code,Zip Code,The ZIP Code associated with the physical address of the Institution's headquarters.,Institution
+ZIPBR,Zip Code (Branch),Zip Code (Branch),The ZIP code associated with the physical address of the branch.,Branch
