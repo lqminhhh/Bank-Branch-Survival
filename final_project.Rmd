@@ -1,6 +1,5 @@
 ---
 title: "Final Project"
-output: html_document
 date: "2025-05-04"
 output: 
   html_document:
@@ -22,6 +21,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
+library(lubridate)
 library(tidyverse)
 library(caret)
 library(dplyr)
@@ -39,6 +39,8 @@ library(rpart.plot)
 library(xgboost)
 library(gbm)
 library(doParallel)
+library(survival)
+library(survminer)
 boa_data <- read.csv("data/cleaned_data/cleaned_data.csv")
 boa_data$closed <- as.factor(boa_data$closed)
 ```
@@ -128,6 +130,12 @@ boa_data %>%
 
 
 ## II. Statistical Analysis
+
+```{r}
+boa_data$deposit_change <- as.numeric(boa_data$deposit_change)
+boa_data$deposit_change[boa_data$deposit_change %in% c(0, -1, Inf, -Inf)] <- NA
+```
+
 
 ```{r}
 df_cleaned <- boa_data %>%
@@ -337,7 +345,7 @@ xgb_cv <- train(
   data = train_data,
   method = "xgbTree",
   trControl = tune_control,
-  metric = "Sens",   # maximize recall
+  metric = "RMSE",   # maximize recall
   tuneGrid = hyperparam_grid
 )
 
@@ -378,3 +386,122 @@ xgb.plot.importance(importance_matrix, rel_to_first = TRUE, xlab = "Relative imp
 
 
 ### 2. Survival Analysis
+
+```{r}
+# Step 1: Convert date
+boa_data$established_date <- mdy(boa_data$established_date)
+
+# Step 2: Extract year from date
+boa_data$established_year <- year(boa_data$established_date)
+
+# Step 3: Filter out branches just opened in 2024
+boa_data <- boa_data %>% filter(established_year < 2024)
+
+# Step 4: Calculate duration
+boa_data$duration <- boa_data$year - boa_data$established_year
+```
+
+```{r}
+df_cleaned <- boa_data %>%
+  dplyr::select(closed,
+                duration,
+                combined_stat_area,
+                deposits,
+                branch_share,
+                market_share,
+                network_equity,
+                deposit_change,
+                nearby_boa_branches,
+                total_nearby_competitor_branches,
+                total_nearby_competitor_deposits,
+                total_nearby_boa_deposits,
+                estimate_household_median_income,
+                estimate_household_mean_income,
+                region_code
+                ) %>%
+  filter(if_all(everything(), ~ !is.na(.) & !is.infinite(.)))
+```
+
+
+```{r}
+df_cleaned$closed <- as.numeric(as.character(df_cleaned$closed))
+
+surv_obj <- Surv(time = df_cleaned$duration, event = df_cleaned$closed)
+
+km_fit <- survfit(surv_obj ~ 1, data = df_cleaned)
+
+ggsurvplot(km_fit,
+           data = df_cleaned,   # required
+           conf.int = TRUE,
+           risk.table = FALSE,
+           title = "Kaplan-Meier Survival Curve for All BoA Branches",
+           xlab = "Years Since Opening",
+           ylab = "Survival Probability")
+```
+
+We divide branches based on median deposit amount to compare their survival.
+
+```{r}
+## Log-Rank Test: High vs Low Deposit Branches
+df_cleaned <- df_cleaned %>% 
+  mutate(deposit_group = ifelse(deposits > median(deposits, na.rm = TRUE), "High", "Low"))
+
+log_rank_test <- survdiff(Surv(duration, closed) ~ deposit_group, data = df_cleaned)
+log_rank_test
+```
+
+- If p-value < 0.05, survival difference between high and low deposit groups is statistically significant. 
+
+Cox PH Model: Single Predictor (Deposits)
+```{r}
+
+cox_deposits <- coxph(Surv(duration, closed) ~ deposits, data = df_cleaned)
+summary(cox_deposits)
+```
+
+Interpretation:
+- The hazard ratio for deposits shows the effect of deposit size on branch survival.
+- A value < 1 implies higher deposits reduce closure risk. 
+
+
+Cox PH Model: Multiple Predictors
+```{r}
+cox_full <- coxph(Surv(duration, closed) ~ deposits + deposit_change + 
+                    network_equity + estimate_household_median_income+ region_code,
+                  data = df_cleaned)
+summary(cox_full)
+```
+
+Plot Predicted Survival for Average Branch in Different Regions
+
+```{r}
+df_cleaned$region_code <- as.numeric(as.character(df_cleaned$region_code))
+# Build newdata for each region (1, 2, 3)
+newdata <- df_cleaned %>%
+  group_by(region_code) %>%
+  summarise(
+    deposits = mean(deposits, na.rm = TRUE),
+    deposit_change = mean(deposit_change, na.rm = TRUE),
+    network_equity = mean(network_equity, na.rm = TRUE),
+    estimate_household_median_income = mean(estimate_household_median_income, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Fit and plot survival curves
+fit_region <- survfit(cox_full, newdata = newdata)
+
+ggsurvplot(fit_region,
+           data = df_cleaned,
+           conf.int = FALSE,
+           risk.table = FALSE,
+           legend.title = "Region Code",
+           legend.labs = c("1 = Rural", "2 = Micropolitan", "3 = Metropolitan"),
+           title = "Adjusted Survival Curves by Region (Cox Model)",
+           xlab = "Years Since Opening",
+           ylab = "Survival Probability",
+           palette = "Set1")
+```
+
+Metropolitan branches may show higher survival 
+
+
