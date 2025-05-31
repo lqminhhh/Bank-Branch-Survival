@@ -1,5 +1,5 @@
 ---
-title: "Final Project"
+title: "Data Modeling"
 date: "2025-05-04"
 output: 
   html_document:
@@ -46,6 +46,7 @@ boa_data$closed <- as.factor(boa_data$closed)
 ```
 
 ```{r}
+# Recode region: 1 - rural, 2 - micropolitan, 3 - metropolitan
 boa_data <- boa_data %>%
   mutate(region_code = case_when(
     is_metropolitan == 1 ~ 3,
@@ -58,6 +59,25 @@ boa_data <- boa_data %>%
 ## I. Data Exploration
 
 We want to take a look at the data first.
+
+```{r}
+# Number of BoA bank overtime
+branches_year <- c(5088, 4855, 4752, 4601,
+                  4474, 4336, 4253, 4215,
+                  3905, 3811, 3743)
+year <- 2014:2024
+
+branch_data <- data.frame(year, branches_year)
+
+ggplot(branch_data, aes(x = year, y = branches_year)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "darkblue", size = 2) +
+  labs(x = "Year",
+       y = "Number of Branches") +
+  scale_x_continuous(breaks = 2014:2024) +
+  theme_minimal()
+```
+
 
 ```{r}
 glimpse(boa_data)
@@ -79,12 +99,11 @@ boa_data %>%
   group_by(region, branch_status) %>%
   summarise(count = n(), .groups = "drop") %>%
   ggplot(aes(x = region, y = count, fill = branch_status)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9), color = "black") +
   geom_text(aes(label = count),
             position = position_dodge(width = 0.9),
             vjust = -0.3, size = 4) +
   labs(
-    title = "Branch Status by Region Type",
     x = "Region Type",
     y = "Number of Branches",
     fill = "Branch Status"
@@ -132,10 +151,10 @@ boa_data %>%
 ## II. Statistical Analysis
 
 ```{r}
+# Clean the deposit change column
 boa_data$deposit_change <- as.numeric(boa_data$deposit_change)
 boa_data$deposit_change[boa_data$deposit_change %in% c(0, -1, Inf, -Inf)] <- NA
 ```
-
 
 ```{r}
 df_cleaned <- boa_data %>%
@@ -181,8 +200,7 @@ corrplot(cor_matrix,
          tl.srt = 45,               
          tl.cex = 0.9,              
          col = colorRampPalette(c("blue", "white", "red"))(200),  
-         mar = c(0, 0, 1, 0),       
-         title = "Correlation Matrix of Key Predictors"
+         mar = c(0, 0, 1, 0)
 )
 
 ```
@@ -215,7 +233,7 @@ tree_model <- rpart(closed ~ .,
 pred_class <- predict(tree_model, newdata = test_data, type = "class")
 
 # Confusion matrix and accuracy
-conf_mat <- confusionMatrix(pred_class, test_data$closed)
+conf_mat <- confusionMatrix(pred_class, test_data$closed, positive = "1")
 print(conf_mat)
 ```
 
@@ -225,81 +243,12 @@ rpart.plot(tree_model,
            type = 2,
            extra = 106,
            fallen.leaves = TRUE,
-           box.palette = "Blues",
-           main = "Decision Tree for Branch Closure")
+           box.palette = "Blues")
 ```
 
 We can see that most of the decisions being made in the tree are related to `deposit_change` and `deposit`. This suggests that the tree is biased towards these two features.
 
-#### 1.2. Random Forest
-
-To avoid the problem occured from decision tree, we will now test a more advanced model, an improved version of decision tree by adding randomness.
-
-```{r}
-# Train the Random Forest model
-rf_model <- randomForest(closed ~ ., data = train_data, ntree = 100, importance = TRUE)
-
-# Predict
-predictions <- predict(rf_model, newdata = test_data)
-```
-
-```{r}
-# Evaluate
-confusionMatrix(predictions, test_data$closed)
-```
-
-```{r}
-# Get variable importance
-importance_df <- as.data.frame(importance(rf_model))
-importance_df$Variable <- rownames(importance_df)
-
-
-ggplot(importance_df, aes(x = reorder(Variable, MeanDecreaseAccuracy), y = MeanDecreaseAccuracy)) +
-  geom_col(fill = "steelblue") +
-  coord_flip() +
-  labs(title = "Variable Importance (Mean Decrease Accuracy)",
-       x = "Variable",
-       y = "Importance") +
-  theme_minimal()
-
-```
-
-#### 1.3. Boosting
-
-Lastly, we want to try boosting method. We will begin by using a basic boosting model. 
-
-```{r}
-train_data$closed <- as.numeric(as.character(train_data$closed))
-
-# Fit GBM model
-model_boosting <- gbm(
-  closed ~ .,
-  data = train_data,
-  distribution = "bernoulli",
-  n.trees = 5000,
-  shrinkage = 0.01,
-  interaction.depth = 3,
-  n.minobsinnode = 10,
-  cv.folds = 10,
-  verbose = FALSE
-)
-```
-
-
-```{r}
-best_iter <- gbm.perf(model_boosting, method = "cv")
-```
-
-```{r}
-# Predict probabilities on test data
-pred_probs <- predict(model_boosting, newdata = test_data, n.trees = best_iter, type = "response")
-
-# Convert probabilities to class (e.g. 0.5 threshold)
-pred_class <- ifelse(pred_probs > 0.5, 1, 0)
-
-# Evaluate
-confusionMatrix(factor(pred_class), factor(test_data$closed))
-```
+#### 1.2. Boosting
 
 We will now try XGBoost. We will do cross validation to tune the parameters to optimize the boosting model. The main metric we will use is Sensitivity, to ensure we catch as many true branch closures as possible. In addition, we also want to avoid Type II error - situation when the branch is predicted to be active when it is actually closed.
 
@@ -310,13 +259,11 @@ y_train <- as.numeric(as.character(train_data$closed))
 
 X_test <- model.matrix(closed ~ . - 1, data = test_data)
 y_test <- as.numeric(as.character(test_data$closed))
-
-# Create DMatrix for XGBoost
-dtrain <- xgb.DMatrix(data = X_train, label = y_train)
-dtest <- xgb.DMatrix(data = X_test, label = y_test)
 ```
 
 ```{r}
+train_data$closed <- as.numeric(as.character(train_data$closed))
+
 hyperparam_grid <- expand.grid(
   nrounds = seq(from = 200, to = 500, by = 100),
   eta = c(0.01, 0.1),
@@ -345,7 +292,7 @@ xgb_cv <- train(
   data = train_data,
   method = "xgbTree",
   trControl = tune_control,
-  metric = "RMSE",   # maximize recall
+  metric = "logLoss",
   tuneGrid = hyperparam_grid
 )
 
@@ -367,25 +314,33 @@ final_model <- xgboost(data = as.matrix(X_train),
                        subsample=xgb_cv$bestTune$subsample,
                        eta=xgb_cv$bestTune$eta,
                        gamma=xgb_cv$bestTune$gamma,
-                       scale_pos_weight = 0.5,
                        verbose = 0)
-
-# now evaluate
-y_pred <- predict(final_model, as.matrix(X_test), type = "response") 
-# Convert probabilities to class (e.g. 0.5 threshold)
-pred_class <- ifelse(y_pred > 0.5, 1, 0)
-
-# Evaluate
-confusionMatrix(factor(pred_class), factor(test_data$closed))
 ```
 
 ```{r}
-importance_matrix <- xgb.importance(colnames(X_train), model = final_model)
-xgb.plot.importance(importance_matrix, rel_to_first = TRUE, xlab = "Relative importance", main = "Feature Importance")
+# Get predicted probabilities
+y_prob <- predict(final_model, as.matrix(X_test), type = "response")
+
+# Calculate ROC curve
+roc_obj <- roc(test_data$closed, y_prob)
+best_threshold <- coords(roc_obj, "best", best.method = "youden")$threshold
+
+# Convert probabilities to classes using optimal threshold
+pred_class <- ifelse(y_prob > best_threshold, 1, 0)
+
+# Evaluate
+confusionMatrix(factor(pred_class), factor(test_data$closed), positive = "1")
 ```
 
 
+```{r}
+importance_matrix <- xgb.importance(colnames(X_train), model = final_model)
+xgb.plot.importance(importance_matrix, rel_to_first = TRUE, xlab = "Relative importance")
+```
+
 ### 2. Survival Analysis
+
+#### 2.1. Kaplan-Meier Survival Curve
 
 ```{r}
 # Step 1: Convert date
@@ -394,17 +349,18 @@ boa_data$established_date <- mdy(boa_data$established_date)
 # Step 2: Extract year from date
 boa_data$established_year <- year(boa_data$established_date)
 
-# Step 3: Filter out branches just opened in 2024
-boa_data <- boa_data %>% filter(established_year < 2024)
+boa_data_filtered <- boa_data %>%
+  filter(established_year < 2024) %>%
+  mutate(
+    entry_time = pmax(0, 2014 - established_year),
+    exit_time  = 2024 - established_year,  # same as duration
+    closed = as.numeric(as.character(closed))
+  ) %>%
+  filter(exit_time > entry_time)
 
-# Step 4: Calculate duration
-boa_data$duration <- boa_data$year - boa_data$established_year
-```
-
-```{r}
-df_cleaned <- boa_data %>%
+boa_data_filtered <- boa_data_filtered %>%
   dplyr::select(closed,
-                duration,
+                exit_time,
                 combined_stat_area,
                 deposits,
                 branch_share,
@@ -417,91 +373,106 @@ df_cleaned <- boa_data %>%
                 total_nearby_boa_deposits,
                 estimate_household_median_income,
                 estimate_household_mean_income,
-                region_code
+                region_code,
+                entry_time
                 ) %>%
   filter(if_all(everything(), ~ !is.na(.) & !is.infinite(.)))
 ```
 
 
 ```{r}
-df_cleaned$closed <- as.numeric(as.character(df_cleaned$closed))
+surv_obj <- Surv(time = boa_data_filtered$entry_time,
+                 time2 = boa_data_filtered$exit_time,
+                 event = boa_data_filtered$closed)
 
-surv_obj <- Surv(time = df_cleaned$duration, event = df_cleaned$closed)
+# Kaplan-Meier
+km_fit <- survfit(surv_obj ~ 1)
 
-km_fit <- survfit(surv_obj ~ 1, data = df_cleaned)
-
-ggsurvplot(km_fit,
-           data = df_cleaned,   # required
-           conf.int = TRUE,
-           risk.table = FALSE,
-           title = "Kaplan-Meier Survival Curve for All BoA Branches",
-           xlab = "Years Since Opening",
-           ylab = "Survival Probability")
+# Plot
+plot(km_fit,
+     xlab = "Year",
+     ylab = "Survival Probability",
+     col = "steelblue")
 ```
 
-We divide branches based on median deposit amount to compare their survival.
+#### 2.2. Cox PH Model: Multiple Predictors
 
 ```{r}
-## Log-Rank Test: High vs Low Deposit Branches
-df_cleaned <- df_cleaned %>% 
-  mutate(deposit_group = ifelse(deposits > median(deposits, na.rm = TRUE), "High", "Low"))
+surv_obj <- Surv(time = boa_data_filtered$entry_time,
+                 time2 = boa_data_filtered$exit_time,
+                 event = boa_data_filtered$closed)
 
-log_rank_test <- survdiff(Surv(duration, closed) ~ deposit_group, data = df_cleaned)
-log_rank_test
+# Fit Cox PH model with multiple predictors
+cox_full <- coxph(surv_obj ~ deposits + deposit_change + 
+                    network_equity + estimate_household_median_income + region_code,
+                  data = boa_data_filtered)
+
+# Display the summary
+summary(cox_full) 
 ```
 
-- If p-value < 0.05, survival difference between high and low deposit groups is statistically significant. 
-
-Cox PH Model: Single Predictor (Deposits)
-```{r}
-
-cox_deposits <- coxph(Surv(duration, closed) ~ deposits, data = df_cleaned)
-summary(cox_deposits)
-```
-
-Interpretation:
-- The hazard ratio for deposits shows the effect of deposit size on branch survival.
-- A value < 1 implies higher deposits reduce closure risk. 
-
-
-Cox PH Model: Multiple Predictors
-```{r}
-cox_full <- coxph(Surv(duration, closed) ~ deposits + deposit_change + 
-                    network_equity + estimate_household_median_income+ region_code,
-                  data = df_cleaned)
-summary(cox_full)
-```
-
-Plot Predicted Survival for Average Branch in Different Regions
+#### 2.3. Model Assumption Checking
 
 ```{r}
-df_cleaned$region_code <- as.numeric(as.character(df_cleaned$region_code))
-# Build newdata for each region (1, 2, 3)
-newdata <- df_cleaned %>%
-  group_by(region_code) %>%
-  summarise(
-    deposits = mean(deposits, na.rm = TRUE),
-    deposit_change = mean(deposit_change, na.rm = TRUE),
-    network_equity = mean(network_equity, na.rm = TRUE),
-    estimate_household_median_income = mean(estimate_household_median_income, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# Fit and plot survival curves
-fit_region <- survfit(cox_full, newdata = newdata)
-
-ggsurvplot(fit_region,
-           data = df_cleaned,
-           conf.int = FALSE,
-           risk.table = FALSE,
-           legend.title = "Region Code",
-           legend.labs = c("1 = Rural", "2 = Micropolitan", "3 = Metropolitan"),
-           title = "Adjusted Survival Curves by Region (Cox Model)",
-           xlab = "Years Since Opening",
-           ylab = "Survival Probability",
-           palette = "Set1")
+zph <- cox.zph(cox_full)
+print(zph)
 ```
 
-Metropolitan branches may show higher survival 
+Deposits and deposit_change violates the PH assumption as its effect may change over time. One way to handle that is by interacting deposits with a function of time (like log(t)):
 
+```{r}
+cox_time_interact <- coxph(
+  Surv(entry_time, exit_time, closed) ~ 
+    tt(deposits) + tt(deposit_change) +
+    network_equity + estimate_household_median_income + region_code,
+  data = boa_data_filtered,
+  tt = function(x, t, ...) x * log(t)
+)
+summary(cox_time_interact) 
+```
+
+Before interpreting the results of the Cox Proportional Hazards Model, we examined its key assumptions. 
+
+- First, the model assumes independent observations — that is, branch closures are not correlated due to shared group membership. While we partially account for this by including region_code as a predictor, spatial clustering within regions may still introduce some dependency. 
+
+- Second, we assume non-informative censoring, meaning the reason a branch is still open (censored) is unrelated to its future risk of closure. This cannot be tested directly but is partially addressed by including key predictors like deposit size, income, and network competition that influence both closure and censoring. 
+
+- Finally, the model assumes proportional hazards, meaning each covariate’s effect on closure risk is constant over time. We formally tested this with the cox.zph() function, which showed that this assumption was violated — especially for the deposits variable. 
+
+To correct for this, we implemented a time-dependent Cox model using the tt() function, allowing deposit effects to vary with log-transformed time. This correction ensures our final model better captures the dynamic risk structure over a branch’s lifespan.
+
+To validate our time-interaction Cox model, we conducted 5-fold cross-validation and computed the concordance index for each fold.
+
+```{r}
+folds <- createFolds(boa_data_filtered$closed, k = 5, list = TRUE)
+c_indices <- numeric(length(folds))
+
+for (i in seq_along(folds)) {
+  train_idx <- setdiff(seq_len(nrow(boa_data_filtered)), folds[[i]])
+  train_data <- boa_data_filtered[train_idx, ]
+  test_data  <- boa_data_filtered[folds[[i]], ]
+
+  # Fit time-dependent Cox model with left truncation
+  model <- coxph(Surv(entry_time, exit_time, closed) ~ 
+                   tt(deposits) + tt(deposit_change) +
+                   network_equity + estimate_household_median_income + region_code,
+                 data = train_data,
+                 tt = function(x, t, ...) x * log(t))
+
+  # Predict risk scores on test set
+  pred <- predict(model, newdata = test_data, type = "lp")
+
+  # Survival object for test set
+  surv_test <- Surv(test_data$entry_time, test_data$exit_time, test_data$closed)
+
+  # Concordance index
+  c_indices[i] <- survConcordance(surv_test ~ pred)$concordance
+}
+
+# Report average C-index
+mean_c_index <- mean(c_indices)
+print(paste("Average C-index across folds:", round(mean_c_index, 4)))
+```
+
+The average C-index across folds was 0.6664, suggesting moderate predictive ability for forecasting branch closure timing. The C-index (concordance index) is analogous to AUC for survival models. 0.663 suggests the model correctly ranks pairs of branch closure risks 66.3% of the time, which is decent for real-world economic data.
 
